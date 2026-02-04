@@ -21,7 +21,7 @@ const SearchBar: FC<SearchBarProps> = ({ search, setSearch, onSearch }) => {
       />
       <button
         onClick={onSearch}
-        className="flex text-sm items-center gap-2 bg-gradient-to-r from-green-500 to-green-700 hover:from-green-600 hover:to-green-800 text-white px-5 py-2 rounded-lg font-medium transition shadow-md hover:shadow-lg"
+        className="flex text-sm items-center gap-2 bg-gradient-to-r from-green-400 to-green-600 hover:from-green-500 hover:to-green-700 text-white px-5 py-2 rounded-lg font-medium transition shadow-md hover:shadow-lg"
       >
         <Search className="w-4 h-4" />
         Search

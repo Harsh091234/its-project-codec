@@ -6,8 +6,8 @@ import { Plus } from "lucide-react";
 const demoUsers: User[] = [
   {
     id: "1",
-    fullName: "Hardik Mistry",
-    email: "hardik@email.com",
+    fullName: "Hardddddddddddddddddddddddddddddddddddddddddddddddddddddik Mistry",
+    email: "hardikdddddddddddddddddddddddddddddddd@email.com",
     gender: "Male",
     status: "Active",
   },
@@ -41,7 +41,7 @@ const HomePage = () => {
   };
 
   return (
-    <div className="p-4 flex-1 ">
+    <div className="p-8 flex-1 ">
       <div className="flex flex-col  sm:flex-row sm:justify-between sm:items-center mb-4">
         <SearchBar
           search={search}
