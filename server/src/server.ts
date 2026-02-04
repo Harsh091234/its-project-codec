@@ -1,0 +1,44 @@
+import express, { type Request, type Response } from "express";
+import dotenv from "dotenv";
+import cors from "cors";
+import path from "node:path";
+import connectDB from "./config/db";
+
+
+dotenv.config();
+const app = express();
+const PORT = process.env.PORT || 3001;
+const __dirname = path.resolve();
+app.use(
+  cors({
+    origin:
+      process.env.NODE_ENV === "production"
+        ? true // same-origin in prod (Render)
+        : process.env.CLIENT_URL,
+    credentials: true,
+  }),
+);
+
+app.use(express.json());
+
+// app.get("/", (req, res) => {
+//     res.send("Hello, World!");
+// })
+
+if (process.env.NODE_ENV === "production") {
+  const a = app.use(express.static(path.join(__dirname, "../client/dist")));
+  const clientPath = path.join(__dirname, "../client/dist");
+
+  console.log("📁 Client dist path:", clientPath);
+
+  app.use(express.static(clientPath));
+
+  app.get(/.*/, (_, res) => {
+    res.sendFile(path.join(__dirname, "../client", "dist", "index.html"));
+  });
+}
+
+app.listen(PORT, () => {
+    connectDB();
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
