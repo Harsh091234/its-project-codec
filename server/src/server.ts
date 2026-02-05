@@ -1,8 +1,8 @@
-import express, { type Request, type Response } from "express";
+import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import path from "node:path";
-import connectDB from "./config/db";
+import connectDB from "./config/db.js";
 import userRoutes from "./routes/user.routes.js";
 
 dotenv.config();
