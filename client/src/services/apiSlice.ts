@@ -9,7 +9,7 @@ export const apiSlice = createApi({
   baseQuery: fetchBaseQuery({ baseUrl }),
   tagTypes: ["User"],
   endpoints: (builder) => ({
-    registerUser: builder.mutation<any, any>({
+    registerUser: builder.mutation({
       query: (data) => ({
         url: "/user",
         method: "POST",
@@ -17,9 +17,18 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: ["User"],
     }),
+    getUser: builder.query({
+      query: (id: string) => `/user/${id}`
+    }),
+    getUsers: builder.query({
+     query: () => "/user/users",
+     providesTags: ["User"]
+    })
   }),
 });
 
 export const {
     useRegisterUserMutation,
+    useGetUsersQuery,
+    useGetUserQuery
 } = apiSlice;

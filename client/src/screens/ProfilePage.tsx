@@ -1,26 +1,26 @@
 import { Calendar, CheckCircle, Mail, MapPin, Phone, User } from "lucide-react";
+import { useGetUserQuery } from "../services/apiSlice";
+import { useParams } from "react-router-dom";
+import CenterLoading from "../components/CenterLoading";
+import { formatDate } from "../utils/formatTime";
+
 
 const ProfilePage = () => {
-   const user = {
-     username: "hardikmistry",
-     email: "hardik@example.com",
-     mobile: "1112212342",
-     gender: "Male",
-     location: "Ahmedabad",
-     status: "Active",
-     dateCreated: "2022-12-10T04:15:35.000Z",
-     dateUpdated: "", // leave empty for now
-     avatarUrl: "https://i.pravatar.cc/150?img=12", // demo avatar
-   };
+  const {id} = useParams<{id: string}>();
+  if(!id) return;
+  const {isLoading: isUserLoading, data: userData}  = useGetUserQuery(id);
+ 
+  const user = userData?.data; 
+   
 
-    
+  if(isUserLoading) return <CenterLoading />;
   return (
     <div className="min-h-screen flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-lg w-full max-w-md md:max-w-lg p-6 md:p-8">
         {/* Avatar */}
         <div className="flex justify-center mb-3 sm:mb-6">
           <img
-            src={user.avatarUrl}
+            src={user.profileImage}
             alt="Profile"
             className="w-20 sm:w-28 h-20 sm:h-28 md:w-32 md:h-32 rounded-full border-2 border-blue-500 object-cover"
           />
@@ -69,16 +69,14 @@ const ProfilePage = () => {
           <div className="flex items-center gap-2">
             <Calendar className="w-4 h-4 sm:w-5 sm:h-5" />
             <span>
-              Date Created: {new Date(user.dateCreated).toLocaleString()}
+              Date Created: {formatDate(user.createdAt)}
             </span>
           </div>
           <div className="flex items-center gap-2">
             <Calendar className="w-4 h-4 sm:w-5 sm:h-5" />
             <span>
               Date Updated:{" "}
-              {user.dateUpdated
-                ? new Date(user.dateUpdated).toLocaleString()
-                : "-"}
+              {formatDate(user.updatedAt)}
             </span>
           </div>
         </div>

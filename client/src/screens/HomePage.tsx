@@ -1,44 +1,25 @@
 import { useState } from "react";
 import SearchBar from "../components/SearchBar";
-import UserTable, { type User } from "../features/Home/components/UserTable";
+import UserTable from "../features/Home/components/UserTable";
 import { Plus } from "lucide-react";
+import { useGetUsersQuery } from "../services/apiSlice";
+import type { User } from "../types/user.types";
 
-const demoUsers: User[] = [
-  {
-    id: "1",
-    fullName: "Hardddddddddddddddddddddddddddddddddddddddddddddddddddddik Mistry",
-    email: "hardikdddddddddddddddddddddddddddddddd@email.com",
-    gender: "Male",
-    status: "Active",
-  },
-  {
-    id: "2",
-    fullName: "Jane Doe",
-    email: "jane@email.com",
-    gender: "Female",
-    status: "Inactive",
-  },
-  {
-    id: "3",
-    fullName: "John Smith",
-    email: "john@email.com",
-    gender: "Male",
-    status: "Active",
-  },
-];
 
 const HomePage = () => {
   const [search, setSearch] = useState("");
-  const [users, setUsers] = useState<User[]>(demoUsers);
+ 
+  const {isLoading: isUsersLoading, data: usersData} = useGetUsersQuery(undefined);
+  const users =  usersData?.data?? [];
+  
 
-  const handleSearch = () => {
-    const filtered = demoUsers.filter(
-      (u) =>
-        u.fullName.toLowerCase().includes(search.toLowerCase()) ||
-        u.email.toLowerCase().includes(search.toLowerCase()),
-    );
-    setUsers(filtered);
-  };
+const filteredUsers = users.filter((u: User) => {
+  const fullName = `${u.firstName ?? ""} ${u.lastName ?? ""}`;
+  return (
+    fullName.toLowerCase().includes(search.toLowerCase()) ||
+    u.email.toLowerCase().includes(search.toLowerCase())
+  );
+});
 
   return (
     <div className="p-8 flex-1 ">
@@ -46,7 +27,7 @@ const HomePage = () => {
         <SearchBar
           search={search}
           setSearch={setSearch}
-          onSearch={handleSearch}
+          onSearch={() => {}}
         />
         <button
           className="max-w-full
@@ -58,12 +39,12 @@ const HomePage = () => {
       hover:from-blue-600 hover:to-blue-800
       disabled:opacity-60 disabled:cursor-not-allowed
     "
-        > 
-        <Plus className="inline-block  w-4 h-4 mr-1 mb-0.5" />
+        >
+          <Plus className="inline-block  w-4 h-4 mr-1 mb-0.5" />
           New User
         </button>
       </div>
-      <UserTable users={users} />
+      {isUsersLoading ? <>loading...</> : <UserTable users={filteredUsers} />}
     </div>
   );
 };

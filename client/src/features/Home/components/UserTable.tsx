@@ -1,15 +1,10 @@
 import { Upload } from "lucide-react";
 import { type FC, useState } from "react";
 import UserActionsPanel from "./panels/UserActionsPanel";
+import type { User } from "../../../types/user.types";
+import { useNavigate } from "react-router-dom";
 
-export interface User {
-  id: string;
-  fullName: string;
-  email: string;
-  gender: "Male" | "Female";
-  status: "Active" | "Inactive";
-  profilePic?: string;
-}
+
 
 interface UserTableProps {
   users: User[];
@@ -40,8 +35,10 @@ const [openUserId, setOpenUserId] = useState<string | null>(null);
         (statusFilter === "All" || u.status === statusFilter),
     )
     .sort((a, b) =>
-      sortAsc ? a.id.localeCompare(b.id) : b.id.localeCompare(a.id),
+      sortAsc ? a._id.localeCompare(b._id) : b._id.localeCompare(a._id),
     );
+
+    const navigate = useNavigate();
 
   const exportCSV = () => {
     const csvContent =
@@ -49,7 +46,7 @@ const [openUserId, setOpenUserId] = useState<string | null>(null);
       ["ID,FullName,Email,Gender,Status"]
         .concat(
           filteredUsers.map(
-            (u) => `${u.id},${u.fullName},${u.email},${u.gender},${u.status}`,
+            (u) => `${u._id},${u.firstName + u.lastName},${u.email},${u.gender},${u.status}`,
           ),
         )
         .join("\n");
@@ -145,22 +142,22 @@ const [openUserId, setOpenUserId] = useState<string | null>(null);
           <tbody>
             {filteredUsers.map((user) => (
               <tr
-                key={user.id}
+                key={user._id}
                 className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow"
               >
-                <td className="px-2 py-3">{user.id}</td>
+                <td className="px-2 py-3">{user._id}</td>
 
                 {/* Profile Avatar */}
                 <td className="px-2 py-3">
                   <img
-                    src={user.profilePic || "https://i.pravatar.cc/40?img=1"}
-                    alt={user.fullName}
-                    className="w-10 h-10 rounded-full object-cover"
+                    src={user.profileImage || "https://i.pravatar.cc/40?img=1"}
+                    alt={user.firstName + user.lastName}
+                    className="w-10 h-10 rounded-full object-cover border-2 border-neutral-200"
                   />
                 </td>
 
                 <td className="px-2 py-3 break-words max-w-50">
-                  {user.fullName}
+                  {user.firstName + user.lastName}
                 </td>
                 <td
                   className="px-2 py-3 truncate max-w-xs text-gray-600"
@@ -185,7 +182,7 @@ const [openUserId, setOpenUserId] = useState<string | null>(null);
                 <td className="px-2  py-3 text-center">
                   <button
                     onClick={() =>
-                      setOpenUserId(openUserId === user.id ? null : user.id)
+                      setOpenUserId(openUserId === user._id ? null : user._id)
                     }
                     className="p-2 relative rounded-full hover:bg-gray-100 transition"
                   >
@@ -203,9 +200,9 @@ const [openUserId, setOpenUserId] = useState<string | null>(null);
                         d="M12 6v.01M12 12v.01M12 18v.01"
                       />
                     </svg>
-                    {openUserId === user.id && (
+                    {openUserId === user._id && (
                       <UserActionsPanel
-                        onView={() => alert("View clicked")}
+                        onView={() => navigate(`/profile/${user._id}`)}
                         onEdit={() => alert("Edit clicked")}
                         onDelete={() => alert("Delete clicked")}
                       />
@@ -222,26 +219,30 @@ const [openUserId, setOpenUserId] = useState<string | null>(null);
       <div className="md:hidden space-y-4">
         {filteredUsers.map((user) => (
           <div
-            key={user.id}
+            key={user._id}
             className="bg-white rounded-xl shadow-md p-4 space-y-3"
           >
             {/* Header */}
             <div className="flex items-center gap-3">
               <img
-                src={user.profilePic || "https://i.pravatar.cc/40?img=1"}
-                alt={user.fullName}
-                className="w-12 h-12 rounded-full object-cover"
+                src={user.profileImage || "https://i.pravatar.cc/40?img=1"}
+                alt={user.firstName + user.lastName}
+                className="w-12 h-12 rounded-full border-2 border-neutral-200 object-cover"
               />
 
               <div className="flex-1">
-                <p className="font-semibold text-gray-800 max-w-[220px] wrap-anywhere">{user.fullName}</p>
-                <p className="text-sm text-gray-500 max-w-[220px] wrap-anywhere">{user.email}</p>
+                <p className="font-semibold text-gray-800 max-w-[220px] wrap-anywhere">
+                  {user.firstName + user.lastName}
+                </p>
+                <p className="text-sm text-gray-500 max-w-[220px] wrap-anywhere">
+                  {user.email}
+                </p>
               </div>
 
               {/* Actions */}
               <button
                 onClick={() =>
-                  setOpenUserId(openUserId === user.id ? null : user.id)
+                  setOpenUserId(openUserId === user._id ? null : user._id)
                 }
                 className="relative p-2 rounded-full hover:bg-gray-100"
               >
@@ -260,9 +261,9 @@ const [openUserId, setOpenUserId] = useState<string | null>(null);
                   />
                 </svg>
 
-                {openUserId === user.id && (
+                {openUserId === user._id && (
                   <UserActionsPanel
-                    onView={() => alert("View clicked")}
+                    onView={() => navigate(`/profile/${user._id}`)}
                     onEdit={() => alert("Edit clicked")}
                     onDelete={() => alert("Delete clicked")}
                   />
@@ -271,10 +272,10 @@ const [openUserId, setOpenUserId] = useState<string | null>(null);
             </div>
 
             {/* Details */}
-            <div className="grid grid-cols-2 gap-3 text-sm">
+            <div className="flex flex-col gap-3 text-sm">
               <div>
                 <p className="text-gray-500">ID</p>
-                <p className="font-medium">{user.id}</p>
+                <p className="font-medium">{user._id}</p>
               </div>
 
               <div>
