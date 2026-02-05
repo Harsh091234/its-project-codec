@@ -29,7 +29,13 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: ["User"],
     }),
-
+    deleteUser: builder.mutation({
+      query: (id: string) => ({
+        url: `/user/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["User"]
+    }),
     getUsers: builder.query({
       query: () => "/user/users",
       providesTags: ["User"],
@@ -38,8 +44,9 @@ export const apiSlice = createApi({
 });
 
 export const {
-    useRegisterUserMutation,
-    useGetUsersQuery,
-    useGetUserQuery,
-    useEditUserMutation
+  useRegisterUserMutation,
+  useGetUsersQuery,
+  useGetUserQuery,
+  useDeleteUserMutation,
+  useEditUserMutation,
 } = apiSlice;

@@ -6,7 +6,6 @@ import { uploadBase64Image } from "../utils/uploadBase64Image.js";
 import { CLOUDINARY_FOLDERS } from "../paths/cloudinary.js";
 import { ApiResponse } from "../utils/apiResponse.js";
 
-
 export const registerUser = asyncHandler(
   async (req: Request, res: Response) => {
     const { firstName, lastName, email, mobile, gender, location } = req.body;
@@ -57,47 +56,61 @@ export const getUsers = asyncHandler(async (req: Request, res: Response) => {
 
 export const getUser = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
- 
+
   const user = await User.findById(id);
   return res.status(200).json(new ApiResponse(200, "User found", user));
 });
 
-export const editUser = asyncHandler(async(req: Request, res: Response) => {
-  const {id} = req.params; 
-  if(!id) throw new ApiError(400, "id is required in params");
+export const editUser = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  if (!id) throw new ApiError(400, "id is required in params");
 
-   const { firstName, lastName, email, mobile, gender, location } = req.body;
+  const { firstName, lastName, email, mobile, gender, location } = req.body;
 
-   let profileImage = null;
-   if (!req.file) {
-     throw new ApiError(400, "Profile image is required");
-   }
+  let profileImage = null;
+  if (!req.file) {
+    throw new ApiError(400, "Profile image is required");
+  }
 
-   const base64String = `data:${req.file.mimetype};base64,${req.file.buffer.toString(
-     "base64",
-   )}`;
-   const uploadedImage = await uploadBase64Image(
-     base64String,
-     CLOUDINARY_FOLDERS.PROFILE_PICS,
-   );
+  const base64String = `data:${req.file.mimetype};base64,${req.file.buffer.toString(
+    "base64",
+  )}`;
+  const uploadedImage = await uploadBase64Image(
+    base64String,
+    CLOUDINARY_FOLDERS.PROFILE_PICS,
+  );
 
-   profileImage = uploadedImage.secure_url;
+  profileImage = uploadedImage.secure_url;
 
-   const updatedUser = await User.findByIdAndUpdate(id,  {
-     firstName,
-     lastName,
-     email,
-     mobile,
-     gender,
-     location,
-     profileImage,
-   },
-  {
-    new: true
-  });
-  if(!updatedUser) throw new ApiError(400, "User not found");
+  const updatedUser = await User.findByIdAndUpdate(
+    id,
+    {
+      firstName,
+      lastName,
+      email,
+      mobile,
+      gender,
+      location,
+      profileImage,
+    },
+    {
+      new: true,
+    },
+  );
+  if (!updatedUser) throw new ApiError(400, "User not found");
 
-   return res
-     .status(200)
-     .json(new ApiResponse(201, "User registered Successfully", updatedUser));
-})
+  return res
+    .status(200)
+    .json(new ApiResponse(201, "User registered Successfully", updatedUser));
+});
+
+export const deleteUser = asyncHandler(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  if (!id) throw new ApiError(400, "id is required in params");
+
+  await User.findByIdAndDelete(id);
+
+  return res
+    .status(200)
+    .json(new ApiResponse(201, "User registered Successfully", {}));
+});

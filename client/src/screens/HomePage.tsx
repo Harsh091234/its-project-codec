@@ -4,11 +4,12 @@ import UserTable from "../features/Home/components/UserTable";
 import { Plus } from "lucide-react";
 import { useGetUsersQuery } from "../services/apiSlice";
 import type { User } from "../types/user.types";
+import { useNavigate } from "react-router-dom";
 
 
 const HomePage = () => {
   const [search, setSearch] = useState("");
- 
+  const navigate = useNavigate();
   const {isLoading: isUsersLoading, data: usersData} = useGetUsersQuery(undefined);
   const users =  usersData?.data?? [];
   
@@ -30,6 +31,7 @@ const filteredUsers = users.filter((u: User) => {
           onSearch={() => {}}
         />
         <button
+        onClick={() => navigate("/register")}
           className="max-w-full
       sm:max-w-30 w-full  mt-2 py-2 px-2 
       rounded-lg text-xs sm:text-sm
