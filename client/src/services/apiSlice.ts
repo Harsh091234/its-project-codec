@@ -18,17 +18,28 @@ export const apiSlice = createApi({
       invalidatesTags: ["User"],
     }),
     getUser: builder.query({
-      query: (id: string) => `/user/${id}`
+      query: (id: string) => `/user/${id}`,
+      providesTags: ["User"],
     }),
+    editUser: builder.mutation({
+      query: ({ id, data }: { id: string; data: FormData }) => ({
+        url: `/user/${id}`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ["User"],
+    }),
+
     getUsers: builder.query({
-     query: () => "/user/users",
-     providesTags: ["User"]
-    })
+      query: () => "/user/users",
+      providesTags: ["User"],
+    }),
   }),
 });
 
 export const {
     useRegisterUserMutation,
     useGetUsersQuery,
-    useGetUserQuery
+    useGetUserQuery,
+    useEditUserMutation
 } = apiSlice;

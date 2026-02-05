@@ -203,7 +203,7 @@ const [openUserId, setOpenUserId] = useState<string | null>(null);
                     {openUserId === user._id && (
                       <UserActionsPanel
                         onView={() => navigate(`/profile/${user._id}`)}
-                        onEdit={() => alert("Edit clicked")}
+                        onEdit={() => navigate(`/edit/${user._id}`)}
                         onDelete={() => alert("Delete clicked")}
                       />
                     )}
@@ -264,7 +264,7 @@ const [openUserId, setOpenUserId] = useState<string | null>(null);
                 {openUserId === user._id && (
                   <UserActionsPanel
                     onView={() => navigate(`/profile/${user._id}`)}
-                    onEdit={() => alert("Edit clicked")}
+                    onEdit={() => navigate(`/edit/${user._id}`)}
                     onDelete={() => alert("Delete clicked")}
                   />
                 )}

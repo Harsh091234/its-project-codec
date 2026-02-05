@@ -16,58 +16,75 @@ const inputClass =
   "w-full rounded border border-neutral-300 px-3 py-1.5 text-xs sm:text-sm outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:w-70";
 
 const RegisterPage = () => {
+  const defaultValues = {
+    firstName: "",
+    lastName: "",
+    email: "",
+    mobile: "",
+    gender: undefined,
+    location: "",
+    profileImage: undefined as FileList | undefined,
+  };
+
   const {
     register,
     handleSubmit,
     setValue,
     watch,
     reset,
-    formState: { errors },
+    formState: { errors, isDirty },
   } = useForm<RegisterUserValues>({
     resolver: zodResolver(registerUserSchema),
+    defaultValues
   });
 
   const gender = watch("gender");
-  const [registerUser, {isLoading: isRegistering}] = useRegisterUserMutation();
-const [isSuccessUI, setIsSuccessUI] = useState<boolean>(false);
-const navigate = useNavigate();
+  const [registerUser, { isLoading: isRegistering }] =
+    useRegisterUserMutation();
+  const [isSuccessUI, setIsSuccessUI] = useState<boolean>(false);
+  const navigate = useNavigate();
 
-  const onSubmit = async(data: RegisterUserValues) => {
-   try {
-     const imageFile = data.profileImage[0];
-     console.log("image", imageFile);
-     console.log("Form Data:", data);
+  const watchedFields = watch();
 
-     const formData = new FormData();
-     formData.append("firstName", data.firstName);
-     formData.append("lastName", data.lastName);
-     formData.append("email", data.email);
-     formData.append("mobile", data.mobile);
-     formData.append("gender", data.gender);
-     formData.append("location", data.location);
-     formData.append("profileImage", data.profileImage[0]);
+  // check if any value is changed
+  const isFormChanged =
+    watchedFields.firstName !== defaultValues.firstName ||
+    watchedFields.lastName !== defaultValues.lastName ||
+    watchedFields.email !== defaultValues.email ||
+    watchedFields.mobile !== defaultValues.mobile ||
+    watchedFields.gender !== defaultValues.gender ||
+    watchedFields.location !== defaultValues.location ||
+    (watchedFields.profileImage && watchedFields.profileImage.length > 0);
 
-     console.log("formdata", formData);
 
-     const res = await registerUser(formData).unwrap();
-     console.log("res form server", res);
-     toast("User registered successfully!");
-     setIsSuccessUI(true);
+  const onSubmit = async (data: RegisterUserValues) => {
+    try {
+      const formData = new FormData();
+      formData.append("firstName", data.firstName);
+      formData.append("lastName", data.lastName);
+      formData.append("email", data.email);
+      formData.append("mobile", data.mobile);
+      formData.append("gender", data.gender);
+      formData.append("location", data.location);
+      formData.append("profileImage", data.profileImage[0]);
 
-     //reset form values
-     reset();
+      await registerUser(formData).unwrap();
 
-     // redirect after 2 seconds
-     setTimeout(() => {
-       navigate("/");
-     }, 2000);
-   }
-    
-    catch (error: any) {
-      const errorMessage = error.data?.message || error.message || "Something went wrong";
-    console.log("error", errorMessage);
-   }
-   
+      toast("User registered successfully!");
+      setIsSuccessUI(true);
+
+      //reset form values
+      reset();
+
+      // redirect after 2 seconds
+      setTimeout(() => {
+        navigate("/");
+      }, 2000);
+    } catch (error: any) {
+      const errorMessage =
+        error.data?.message || error.message || error || "Something went wrong";
+      console.log("error", errorMessage);
+    }
   };
   return (
     <div className="flex-1 flex flex-col items-center justify-center px-4 sm:px-0">
@@ -226,7 +243,7 @@ const navigate = useNavigate();
         {/* Submit */}
         <button
           type="submit"
-          disabled={isRegistering}
+          disabled={!isFormChanged || isRegistering}
           className="
       w-full mt-2 py-2
       rounded-lg text-xs sm:text-sm
@@ -244,7 +261,7 @@ const navigate = useNavigate();
             </span>
           ) : isSuccessUI ? (
             <span className="flex items-center justify-center gap-2">
-              Registered <CheckLine  className="h-4 w-4"/>
+              Registered <CheckLine className="h-4 w-4" />
             </span>
           ) : (
             "Register"
@@ -253,6 +270,6 @@ const navigate = useNavigate();
       </form>
     </div>
   );
-};
+};;
 
 export default RegisterPage;

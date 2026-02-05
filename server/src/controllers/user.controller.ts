@@ -5,7 +5,7 @@ import { ApiError } from "../utils/apiError.js";
 import { uploadBase64Image } from "../utils/uploadBase64Image.js";
 import { CLOUDINARY_FOLDERS } from "../paths/cloudinary.js";
 import { ApiResponse } from "../utils/apiResponse.js";
-import mongoose from "mongoose";
+
 
 export const registerUser = asyncHandler(
   async (req: Request, res: Response) => {

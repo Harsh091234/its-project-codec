@@ -9,7 +9,7 @@ import Header from './components/Header';
 
 const App = () => {
   return (
-    <div className='min-h-screen bg-neutral-200 flex flex-col '>
+    <div className='min-h-screen bg-neutral-200 flex flex-col overflow-y-auto '>
       <Header />
       <Routes>
         <Route path="/" element={<HomePage />} />
