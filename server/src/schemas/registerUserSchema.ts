@@ -24,18 +24,6 @@ export const registerUserSchema = z.object({
     .enum(["Male", "Female"])
     .refine(Boolean, { message: "Select a gender" }),
   location: z.string().min(2, "Location is required"),
-   profileImage: z
-    .any()
-    .refine((files) => files?.length === 1, "Image is required")
-    .refine(
-      (files) => files?.[0]?.size <= MAX_FILE_SIZE,
-      "Max image size is 2MB"
-    )
-    .refine(
-      (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
-      "Only JPG, PNG, WEBP allowed"
-    ),
-
 });
 
 export type RegisterUserValues = z.infer<typeof registerUserSchema>;

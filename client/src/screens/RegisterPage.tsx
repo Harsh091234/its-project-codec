@@ -1,12 +1,14 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useNavigate } from "react-router-dom";
 import {
   registerUserSchema,
   type RegisterUserValues,
 } from "../schemas/registerUserSchema";
 import { useState } from "react";
-import { Loader2 } from "lucide-react";
+import { CheckLine, Loader2 } from "lucide-react";
 import { toast } from "react-toastify";
+import { useRegisterUserMutation } from "../services/apiSlice";
 
 const labelClass = "block text-xs sm:text-sm font-medium text-neutral-600 mb-1";
 
@@ -24,32 +26,42 @@ const RegisterPage = () => {
   } = useForm<RegisterUserValues>({
     resolver: zodResolver(registerUserSchema),
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const gender = watch("gender");
+  const [registerUser, {isLoading: isRegistering}] = useRegisterUserMutation();
+const [isSuccessUI, setIsSuccessUI] = useState<boolean>(false);
+const navigate = useNavigate();
 
-  const onSubmit = (data: RegisterUserValues) => {
+  const onSubmit = async(data: RegisterUserValues) => {
    try {
-     toast("Form submitted successfully!");
      const imageFile = data.profileImage[0];
-    console.log("image", imageFile);
-    console.log("Form Data:", data);
+     console.log("image", imageFile);
+     console.log("Form Data:", data);
 
-    const formData = new FormData();
-    formData.append("firstName", data.firstName);
-    formData.append("lastName", data.lastName);
-    formData.append("email", data.email);
-    formData.append("mobile", data.mobile);
-    formData.append("gender", data.gender);
-    formData.append("location", data.location);
-    formData.append("profileImage", data.profileImage[0]);
-    
-  console.log("formdata", formData);
-    
+     const formData = new FormData();
+     formData.append("firstName", data.firstName);
+     formData.append("lastName", data.lastName);
+     formData.append("email", data.email);
+     formData.append("mobile", data.mobile);
+     formData.append("gender", data.gender);
+     formData.append("location", data.location);
+     formData.append("profileImage", data.profileImage[0]);
 
-  //reset form values
-  reset();
+     console.log("formdata", formData);
 
-}
+     const res = await registerUser(formData).unwrap();
+     console.log("res form server", res);
+     toast("User registered successfully!");
+     setIsSuccessUI(true);
+
+     //reset form values
+     reset();
+
+     // redirect after 2 seconds
+     setTimeout(() => {
+       navigate("/");
+     }, 2000);
+   }
     
     catch (error: any) {
       const errorMessage = error.data?.message || error.message || "Something went wrong";
@@ -133,7 +145,7 @@ const RegisterPage = () => {
             </label>
             <input
               id="mobile"
-              type="number"
+              type="tel"
               {...register("mobile")}
               placeholder="Mobile Number"
               className={`${inputClass} appearance-none`}
@@ -154,8 +166,8 @@ const RegisterPage = () => {
               <label className="flex items-center gap-2 text-xs sm:text-sm">
                 <input
                   type="radio"
-                  checked={gender === "male"}
-                  onChange={() => setValue("gender", "male")}
+                  checked={gender === "Male"}
+                  onChange={() => setValue("gender", "Male")}
                 />
                 Male
               </label>
@@ -163,8 +175,8 @@ const RegisterPage = () => {
               <label className="flex items-center gap-2 text-xs sm:text-sm">
                 <input
                   type="radio"
-                  checked={gender === "female"}
-                  onChange={() => setValue("gender", "female")}
+                  checked={gender === "Female"}
+                  onChange={() => setValue("gender", "Female")}
                 />
                 Female
               </label>
@@ -214,7 +226,7 @@ const RegisterPage = () => {
         {/* Submit */}
         <button
           type="submit"
-          disabled={isSubmitting}
+          disabled={isRegistering}
           className="
       w-full mt-2 py-2
       rounded-lg text-xs sm:text-sm
@@ -225,13 +237,17 @@ const RegisterPage = () => {
       disabled:opacity-60 disabled:cursor-not-allowed
     "
         >
-          {isSubmitting ? (
+          {isRegistering ? (
             <span className="flex items-center justify-center gap-2">
               <Loader2 className="h-4 w-4 animate-spin" />
-              Submitting...
+              Registering...
+            </span>
+          ) : isSuccessUI ? (
+            <span className="flex items-center justify-center gap-2">
+              Registered <CheckLine  className="h-4 w-4"/>
             </span>
           ) : (
-            "Submit"
+            "Register"
           )}
         </button>
       </form>

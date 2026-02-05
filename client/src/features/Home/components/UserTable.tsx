@@ -66,7 +66,7 @@ const [openUserId, setOpenUserId] = useState<string | null>(null);
     <div className="bg-white p-6 rounded-2xl shadow-lg">
       {/* Filters + Export */}
       <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-6">
-        <div className="flex flex-col md:flex-row items-center gap-10">
+        <div className="flex flex-col md:flex-row items-center gap-2 md:gap-10">
           {/* Gender Filter */}
           <div className="flex items-center gap-3">
             <span className="font-semibold text-gray-700">Gender:</span>
@@ -111,16 +111,20 @@ const [openUserId, setOpenUserId] = useState<string | null>(null);
         </div>
 
         <button
-          className="flex gap-2 bg-green-600 text-sm text-white px-5 py-2 rounded-lg hover:bg-green-700 transition-colors"
           onClick={exportCSV}
+          className="flex text-sm items-center gap-2 
+             bg-gradient-to-r from-green-400 to-green-600
+             hover:from-green-500 hover:to-green-700
+             text-white px-5 py-2 rounded-lg font-medium
+             transition shadow-md hover:shadow-lg"
         >
           <Upload className="w-4 h-4" />
           Export CSV
         </button>
       </div>
 
-      {/* Table */}
-      <div className="overflow-x-auto">
+      {/* Desktop Table */}
+      <div className="hidden md:block overflow-x-auto">
         <table className="min-w-full border-separate border-spacing-y-2">
           <thead>
             <tr className="bg-gray-100 rounded-lg">
@@ -212,6 +216,87 @@ const [openUserId, setOpenUserId] = useState<string | null>(null);
             ))}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile Cards */}
+      <div className="md:hidden space-y-4">
+        {filteredUsers.map((user) => (
+          <div
+            key={user.id}
+            className="bg-white rounded-xl shadow-md p-4 space-y-3"
+          >
+            {/* Header */}
+            <div className="flex items-center gap-3">
+              <img
+                src={user.profilePic || "https://i.pravatar.cc/40?img=1"}
+                alt={user.fullName}
+                className="w-12 h-12 rounded-full object-cover"
+              />
+
+              <div className="flex-1">
+                <p className="font-semibold text-gray-800 max-w-[220px] wrap-anywhere">{user.fullName}</p>
+                <p className="text-sm text-gray-500 max-w-[220px] wrap-anywhere">{user.email}</p>
+              </div>
+
+              {/* Actions */}
+              <button
+                onClick={() =>
+                  setOpenUserId(openUserId === user.id ? null : user.id)
+                }
+                className="relative p-2 rounded-full hover:bg-gray-100"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5 text-gray-600"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 6v.01M12 12v.01M12 18v.01"
+                  />
+                </svg>
+
+                {openUserId === user.id && (
+                  <UserActionsPanel
+                    onView={() => alert("View clicked")}
+                    onEdit={() => alert("Edit clicked")}
+                    onDelete={() => alert("Delete clicked")}
+                  />
+                )}
+              </button>
+            </div>
+
+            {/* Details */}
+            <div className="grid grid-cols-2 gap-3 text-sm">
+              <div>
+                <p className="text-gray-500">ID</p>
+                <p className="font-medium">{user.id}</p>
+              </div>
+
+              <div>
+                <p className="text-gray-500">Gender</p>
+                <p className="font-medium">{user.gender}</p>
+              </div>
+
+              <div className="col-span-2">
+                <p className="text-gray-500">Status</p>
+                <span
+                  className={`inline-block px-3 py-1 rounded-full text-sm font-semibold ${
+                    user.status === "Active"
+                      ? "bg-green-100 text-green-700"
+                      : "bg-red-100 text-red-700"
+                  }`}
+                >
+                  {user.status}
+                </span>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import path from "node:path";
 import connectDB from "./config/db";
-
+import userRoutes from "./routes/user.routes.js";
 
 dotenv.config();
 const app = express();
@@ -19,11 +19,13 @@ app.use(
   }),
 );
 
-app.use(express.json());
+app.use(express.json({ limit: "10mb" }));
 
 // app.get("/", (req, res) => {
 //     res.send("Hello, World!");
 // })
+
+app.use("/api/user", userRoutes);
 
 if (process.env.NODE_ENV === "production") {
   const a = app.use(express.static(path.join(__dirname, "../client/dist")));
@@ -39,6 +41,6 @@ if (process.env.NODE_ENV === "production") {
 }
 
 app.listen(PORT, () => {
-    connectDB();
+  connectDB();
   console.log(`Server is running on http://localhost:${PORT}`);
 });
