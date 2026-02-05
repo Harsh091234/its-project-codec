@@ -15,7 +15,7 @@ const UserTable: FC<UserTableProps> = ({ users }) => {
     "All",
   );
   const [showConfirm, setShowConfirm] = useState(false);
-  const [open, setOpen] = useState(false);
+
     const [id, setId] = useState("");
   const [statusFilter, setStatusFilter] = useState<
     "All" | "Active" | "Inactive"
@@ -29,7 +29,7 @@ const UserTable: FC<UserTableProps> = ({ users }) => {
     "Inactive",
   ];
   const [openUserId, setOpenUserId] = useState<string | null>(null);
-  const [deleteUser, { isLoading: isDeletingUser }] = useDeleteUserMutation();
+  const [deleteUser] = useDeleteUserMutation();
   const filteredUsers = users
     .filter(
       (u) =>

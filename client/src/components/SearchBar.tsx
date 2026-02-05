@@ -1,5 +1,5 @@
-import { Search } from "lucide-react";
-import type { FC, ChangeEvent } from "react";
+
+import type { FC } from "react";
 
 interface SearchBarProps {
   search: string;
@@ -7,7 +7,7 @@ interface SearchBarProps {
   onSearch: () => void;
 }
 
-const SearchBar: FC<SearchBarProps> = ({ search, setSearch, onSearch }) => {
+const SearchBar: FC<SearchBarProps> = ({ search, setSearch }) => {
   return (
     <div className="flex items-center gap-3 mb-4">
       <input

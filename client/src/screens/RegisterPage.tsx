@@ -32,7 +32,7 @@ const RegisterPage = () => {
     setValue,
     watch,
     reset,
-    formState: { errors, isDirty },
+    formState: { errors },
   } = useForm<RegisterUserValues>({
     resolver: zodResolver(registerUserSchema),
     defaultValues
